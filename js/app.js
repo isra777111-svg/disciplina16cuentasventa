@@ -1436,18 +1436,18 @@ Ana Garcia"></textarea>
         const defaultContent = `
                 <div class="text-center mb-2">
                     <h2>REGLAMENTO INTERNO</h2>
-                    <h3 class="text-muted">${instName.toUpperCase()}</h3>
+                    <h3 class="text-muted">UNIDAD EDUCATIVA ${instName.toUpperCase()}</h3>
                     <p class="text-sm">PARA ESTUDIANTES Y PADRES DE FAMILIA</p>
                 </div>
                 
                 <div class="regulation-section mb-2">
                     <h3>1. DE LA NATURALEZA</h3>
-                    <p>La ${instName} turno mañana, es una institución educativa fiscal creado para prestar el servicio a la población estudiantil de la zona.</p>
+                    <p>La Unidad Educativa ${instName} turno mañana, es una institución educativa fiscal creado para prestar el servicio a la población estudiantil de la zona.</p>
                 </div>
                 
                 <div class="regulation-section mb-2">
                     <h3>2. DEL OBJETIVO</h3>
-                    <p>El objetivo del presente reglamento; es regular el funcionamiento, desarrollo y evaluación de la gestión escolar de la ${instName} turno mañana; en el marco de los principios y normas de los Tratados Internacionales y normativa vigente basado en la Constitución del Estado Plurinacional de Bolivia.</p>
+                    <p>El objetivo del presente reglamento; es regular el funcionamiento, desarrollo y evaluación de la gestión escolar de la Unidad Educativa; en el marco de los principios y normas de los Tratados Internacionales y normativa vigente basado en la Constitución del Estado Plurinacional de Bolivia.</p>
                 </div>
 
                 <div class="regulation-section mb-2">
