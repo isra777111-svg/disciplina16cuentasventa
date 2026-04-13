@@ -1,5 +1,5 @@
 import { db as firestoreDb } from './firebase.js';
-import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, setDoc, deleteDoc, onSnapshot } from "firebase/firestore";
 
 const DB_PREFIX = "diciplinaria_";
 
@@ -23,19 +23,23 @@ class Database {
             { id: 'inst_aula111', username: 'aula111', password: 'aula111', name: 'Institución Aula111', institutionId: 'aula111' },
             { id: 'inst_aprende', username: 'aprende', password: 'aprende123', name: 'Institución Aprende', institutionId: 'aprende' },
             { id: 'inst_estudia', username: 'estudia', password: 'estudia123', name: 'Institución Estudia', institutionId: 'estudia' },
-            { id: 'inst_practica', username: 'practica', password: 'practica123', name: 'Institución Practica', institutionId: 'practica' },
-            { id: 'inst_avanza', username: 'avanza', password: 'avanza123', name: 'Institución Avanza', institutionId: 'avanza' },
-            { id: 'inst_docente', username: 'docente', password: 'docente123', name: 'Institución Docente', institutionId: 'docente' },
-            { id: 'inst_sistema', username: 'sistema', password: 'sistema123', name: 'Institución Sistema', institutionId: 'sistema' },
-            { id: 'inst_control', username: 'control', password: 'control123', name: 'Institución Control', institutionId: 'control' },
-            { id: 'inst_registro', username: 'registro', password: 'registro123', name: 'Institución Registro', institutionId: 'registro' },
-            { id: 'inst_reporte', username: 'reporte', password: 'reporte123', name: 'Institución Reporte', institutionId: 'reporte' },
-            { id: 'inst_estudiante', username: 'estudiante', password: 'estudiante123', name: 'Institución Estudiante', institutionId: 'estudiante' },
-            { id: 'inst_informes', username: 'informes', password: 'informes123', name: 'Institución Informes', institutionId: 'informes' },
             { id: 'inst_aula125', username: 'aula125', password: 'aula125', name: 'Institución Aula125', institutionId: 'aula125' },
             { id: 'inst_aula077', username: 'aula077', password: 'aula077', name: 'Institución Aula077', institutionId: 'aula077' },
             { id: 'inst_auladis123', username: 'auladis123', password: 'auladis123', name: 'Institución Auladis123', institutionId: 'auladis123' },
-            { id: 'inst_auladis245', username: 'auladis245', password: 'auladis245', name: 'Institución Auladis245', institutionId: 'auladis245' }
+            { id: 'inst_auladis245', username: 'auladis245', password: 'auladis245', name: 'Institución Auladis245', institutionId: 'auladis245' },
+            { id: 'inst_disciplina_1', username: 'disciplina', password: 'aula2026', name: 'Institución Disciplina 1', institutionId: 'disciplina_1' },
+            { id: 'inst_disciplina_2', username: 'disciplina', password: 'control7', name: 'Institución Disciplina 2', institutionId: 'disciplina_2' },
+            { id: 'inst_disciplina_3', username: 'disciplina', password: 'acceso9', name: 'Institución Disciplina 3', institutionId: 'disciplina_3' },
+            { id: 'inst_disciplina_4', username: 'disciplina', password: 'docente5', name: 'Institución Disciplina 4', institutionId: 'disciplina_4' },
+            { id: 'inst_disciplina_5', username: 'disciplina', password: 'sis1234', name: 'Institución Disciplina 5', institutionId: 'disciplina_5' },
+            { id: 'inst_disciplina_6', username: 'disciplina', password: 'aula456', name: 'Institución Disciplina 6', institutionId: 'disciplina_6' },
+            { id: 'inst_disciplina_7', username: 'disciplina', password: 'control55', name: 'Institución Disciplina 7', institutionId: 'disciplina_7' },
+            { id: 'inst_disciplina_8', username: 'disciplina', password: 'edu2026', name: 'Institución Disciplina 8', institutionId: 'disciplina_8' },
+            { id: 'inst_disciplina_9', username: 'disciplina', password: 'ing123', name: 'Institución Disciplina 9', institutionId: 'disciplina_9' },
+            { id: 'inst_disciplina_10', username: 'disciplina', password: 'aula789', name: 'Institución Disciplina 10', institutionId: 'disciplina_10' },
+            { id: 'inst_disciplina_11', username: 'disciplina', password: 'aula11', name: 'Institución Disciplina 11', institutionId: 'disciplina_11' },
+            { id: 'inst_disciplina_12', username: 'disciplina', password: 'sis555', name: 'Institución Disciplina 12', institutionId: 'disciplina_12' },
+            { id: 'inst_disciplina_13', username: 'disciplina', password: 'sistema5', name: 'Institución Disciplina 13', institutionId: 'disciplina_13' }
         ];
 
         const user = this.getCurrentUser();
@@ -119,6 +123,15 @@ class Database {
             await setDoc(doc(firestoreDb, `institutions/${this.tenantId}/${table}`, String(dataItem.id)), dataItem);
         } catch (e) {
             console.error(`Error syncing to Firebase ${table}:`, e);
+        }
+    }
+
+    async _deleteFromFirebase(table, id) {
+        if (!firestoreDb || !this.tenantId) return;
+        try {
+            await deleteDoc(doc(firestoreDb, `institutions/${this.tenantId}/${table}`, String(id)));
+        } catch (e) {
+            console.error(`Error deleting from Firebase ${table}:`, e);
         }
     }
 
@@ -216,6 +229,18 @@ class Database {
         return null;
     }
 
+    deleteIncident(id) {
+        let incidents = this.getIncidents();
+        const initialLength = incidents.length;
+        incidents = incidents.filter(i => i.id !== parseInt(id));
+        if (incidents.length !== initialLength) {
+            this._saveTable('incidents', incidents);
+            this._deleteFromFirebase('incidents', id);
+            return true;
+        }
+        return false;
+    }
+
     getIncidentById(id) {
         return this.getIncidents().find(i => i.id === parseInt(id));
     }
@@ -236,6 +261,18 @@ class Database {
         this._saveTable('documents', documents);
         this._syncToFirebase('documents', newDocument);
         return newDocument;
+    }
+
+    deleteDocument(id) {
+        let documents = this.getDocuments();
+        const initialLength = documents.length;
+        documents = documents.filter(d => d.id !== parseInt(id));
+        if (documents.length !== initialLength) {
+            this._saveTable('documents', documents);
+            this._deleteFromFirebase('documents', id);
+            return true;
+        }
+        return false;
     }
     // --- SETTINGS ---
     getSetting(key, defaultValue = '') {

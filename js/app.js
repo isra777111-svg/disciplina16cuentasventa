@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             authSection.classList.add('hidden');
             appSection.classList.remove('hidden');
-            currentUserSpan.textContent = user.name;
+            if (currentUserSpan) { currentUserSpan.textContent = user.name; }
             loadView('dashboard');
         } else {
             authSection.classList.remove('hidden');
@@ -773,9 +773,13 @@ Ana Garcia"></textarea>
                         <td>${inc.description || 'N/A'}</td>
                         <td>${inc.sanction || '-'}</td>
                         <td>
-                            <button class="btn btn-sm btn-warning btn-edit-incident" data-id="${inc.id}">
+                            <button class="btn btn-sm btn-warning btn-edit-incident mr-1" data-id="${inc.id}">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5 14.5z"></path></svg>
                                 Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-delete-incident" data-id="${inc.id}">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Eliminar
                             </button>
                         </td>
                     </tr>
@@ -837,9 +841,13 @@ Ana Garcia"></textarea>
                         <td><strong>${doc.type}</strong></td>
                         <td>${doc.content.substring(0, 60)}...</td>
                         <td>
-                            <button class="btn btn-sm btn-purple btn-print-doc" data-id="${doc.id}">
+                            <button class="btn btn-sm btn-purple btn-print-doc mr-1" data-id="${doc.id}">
                                 <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                 Imprimir / Ver
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-delete-doc" data-id="${doc.id}">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Eliminar
                             </button>
                         </td>
                     </tr>
@@ -885,6 +893,27 @@ Ana Garcia"></textarea>
             });
         });
 
+        // Delete Incident Events
+        document.querySelectorAll('.btn-delete-incident').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const incId = parseInt(e.currentTarget.dataset.id);
+                Swal.fire({
+                    title: '¿Está seguro de que desea eliminar este registro?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.db.deleteIncident(incId);
+                        renderStudentProfile(studentId);
+                    }
+                });
+            });
+        });
+
         // Document Events
         document.getElementById('btn-add-acta').addEventListener('click', () => {
             renderAddDocumentForm(studentId, 'Acta de Compromiso');
@@ -898,6 +927,27 @@ Ana Garcia"></textarea>
             btn.addEventListener('click', (e) => {
                 const docId = parseInt(e.currentTarget.dataset.id);
                 printDocument(docId);
+            });
+        });
+
+        // Delete Document Event
+        document.querySelectorAll('.btn-delete-doc').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const docId = parseInt(e.currentTarget.dataset.id);
+                Swal.fire({
+                    title: '¿Está seguro de que desea eliminar este documento?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.db.deleteDocument(docId);
+                        renderStudentProfile(studentId);
+                    }
+                });
             });
         });
     }
